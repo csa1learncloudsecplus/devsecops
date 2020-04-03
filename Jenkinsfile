@@ -2,23 +2,23 @@
 
 pipeline {
     agent any
-    
+
     environment {
-        AWS_REGION = 'eu-west-1' 
+        AWS_REGION = 'eu-west-1'
         AWS_ENV = 'csa15'
         AWS_DOM = 'learncloudsecplus.net'
     }
-    
+
     stages {
         stage('Build'){
             steps {
-                sh 'npm i' 
+                sh 'npm i'
             }
         }
         stage('Unit Test'){
             steps {
                 sh 'npm test'
-            } 
+            }
         }
         stage('Dev (Deploy)') {
             environment {
@@ -26,16 +26,20 @@ pipeline {
         }
         steps {
             sh 'serverless create_domain'
-            sh 'serverless deploy -s dev' 
+            sh 'serverless deploy -s dev'
         }
-     } 
-     stage('Test (Deploy)') 
+     }
+     stage('Test (Deploy)')
         { environment {
             AWS_STAGE = 'test'
         }
         steps {
             sh 'serverless create_domain'
-            sh 'serverless deploy -s test' 
+            sh 'serverless deploy -s test'
+        }
+    }
+    stage('Inspec Test'){ steps {
+            sh 'inspec exec api-ping/controls/test.rb' 
         }
     }
   }
