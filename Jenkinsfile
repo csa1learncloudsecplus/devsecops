@@ -25,8 +25,18 @@ pipeline {
                 AWS_STAGE = 'dev'
         }
         steps {
+            sh 'serverless create_domain'
             sh 'serverless deploy -s dev' 
         }
      } 
+     stage('Test (Deploy)') 
+        { environment {
+            AWS_STAGE = 'test'
+        }
+        steps {
+            sh 'serverless create_domain'
+            sh 'serverless deploy -s test' 
+        }
+    }
   }
 }
